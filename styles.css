@@ -36,6 +36,11 @@
     --box-shadow-lg: -6px 6px 10px var(--med-gray);
 }
 
+/* Global safety for flex/grid children: allow them to shrink (common overflow cause) */
+* {
+    box-sizing: border-box;
+}
+
 /* Body Styles */
 body{
     font-family: var(--body-fonts);
@@ -73,7 +78,14 @@ header{
     background-position: right;
     background-size: contain;
     /* Styles were added here to arrange the content, I used flexbox */
-    /* TO DO */
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 32px;
+    /* increase left padding instead of pushing with h1 margin-left */
+    padding: 48px 32px;
+    padding-left: 160px; /* keeps the visual inset without causing overflow */
 }
 
 /* For All Headings */
@@ -88,7 +100,10 @@ h1, h2, h3, h4{
 h1{
     font-size: 7rem;
     width: 515px;
-    margin: 0 0 0 10rem;
+    margin: 0; /* removed large left margin that caused horizontal shift */
+    /* Keep a safe max-width to prevent overflow on small viewports */
+    max-width: 100%;
+    align-self: flex-start;
 }
 
 /* The Link in the h1 */
@@ -128,15 +143,20 @@ h4{
 /* Navigation */
 nav{
     width: 600px;
-    margin: 0 0 0 6rem;
+    margin: 0; /* removed left margin that contributed to horizontal shift */
     position: relative;
 }
 
+/* NOTE: nav is inside header which now has left padding to create the visual inset */
 nav ul{
     list-style-type: none;
     padding: 0;
     /* Styles were added here to arrange the content, I used flexbox */
-    /* TO DO */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 24px;
 }
 
 nav a{
@@ -164,7 +184,8 @@ nav a span{
     display: block;
     position: relative;
     /* Styles were added here to arrange the content, I used top and z-index for this */
-    /* TO DO */
+    top: -40px;
+    z-index: 2;
 }
 
 nav a:focus{
@@ -178,6 +199,8 @@ nav a:hover svg, nav a:focus svg{
 /* Links */
 a{
     color: var(--leaf);
+    /* make sure links never force overflow */
+    max-width: 100%;
 }
 
 /* Link Hover Styles */
@@ -218,23 +241,40 @@ p{
     padding: 8px 0;
 }
 
+/* Images and SVG safe rules */
+img, svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
 /* Plants Section */
 #plants{
     background-color: var(--wht);
     padding: 96px 32px;
     /* Styles were added here to arrange the content, I used grid */
-    /* TO DO */
+    display: grid;
+    grid-template-columns: 1fr 480px;
+    gap: 32px;
+    align-items: start;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 #plants h3, #plants > p{
     /* Styles were added here to arrange the content, these are grid children styles */
-    /* TO DO */
+    grid-column: 1 / 2;
 }
 
 #plants section{
     /* Styles were added here to arrange the content, I used flexbox */
-    /* TO DO */
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    align-items: center;
+    justify-content: space-between;
     margin: 32px auto 0;
+    max-width: 1100px;
 }
 
 #plants h4{
@@ -243,7 +283,7 @@ p{
 
 #plants img{
     /* Styles were added here to arrange the content, I used a property for a flexbox child to change the order that the content appears on the page */
-    /* TO DO */
+    order: -1;
     width: 100%;
     max-width: 400px;
     height: auto;
@@ -264,13 +304,18 @@ p{
     color: var(--wht);
     padding: 64px 32px;
     /* Styles were added here to arrange the content, I used grid */
-    /* TO DO */
+    display: grid;
+    grid-template-columns: 1fr 520px;
+    gap: 32px;
+    align-items: start;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 /* Contact Heading and Paragraph */
 #contact h3, #contact > p{
     /* Styles were added here to arrange the content, these are grid children styles */
-    /* TO DO */
+    grid-column: 1 / 2;
 }
 
 /* Contact text color */
@@ -356,17 +401,22 @@ th:nth-of-type(even), td:nth-of-type(even){
 /* Social Media List */
 #social ul{
     /* Styles were added here to arrange the content, I used grid */
-    /* TO DO */
     width: fit-content;
     margin: 16px auto;
     list-style-type: none;
     padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 12px;
+    justify-items: center;
+    align-items: center;
 }
 
 /* Heading for Social Media Section */
 #social h4{
     /* Styles were added here to arrange the content, these are grid children styles */
-    /* TO DO */
+    grid-column: 1 / -1;
+    text-align: center;
 }
 
 #social a{
@@ -383,7 +433,6 @@ th:nth-of-type(even), td:nth-of-type(even){
 #social a:hover svg{
     fill: var(--wht);
     stroke: var(--forest);
-
 }
 
 /* Social Media Icons on Focus */
@@ -480,10 +529,11 @@ input:focus, input:focus-visible, textarea:focus, textarea:focus-visible{
     padding: 16px;
     border-radius: 50%;
     position: fixed;
-    top: 90vh;
-    left: calc(100vw - 100px);
+    bottom: 40px;
+    right: 40px;
     background-color: var(--forest);
     border: 2px solid var(--wht);
+    z-index: 1000;
 }
 
 #btt svg{
